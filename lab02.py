@@ -118,11 +118,19 @@ def eval_learning_alg(learner, data_gen, n_train, n_test, iter):
 
 def xval_learning_alg(learner, data, labels, k):
     d, n = data.shape
-    if (d % k == 0):
-        for di in range (k-1):
-            for j in range(k-1):
-                d_minus_j = 
-    return None
+    di = np.array_split(np.arange(n), k)
+    scores = []
+    for fold in range(k):
+        test_idx = di[fold]
+        train_idx = np.concatenate([di[i] for i in range(k) if i != fold])
+        data_train = data[:, train_idx]
+        labels_train = labels[:, train_idx]
+        data_test = data[:, test_idx]
+        labels_test = labels[:, test_idx]
+        scores.append(
+            eval_classifier(learner, data_train, labels_train, data_test, labels_test)
+        )
+    return np.mean(scores)
 
 print(perceptron(super_simple_separable()[0], super_simple_separable()[1]))
 print(perceptron(super_simple_separable_through_origin()[0], super_simple_separable_through_origin()[1]))
