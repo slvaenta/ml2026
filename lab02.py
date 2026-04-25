@@ -118,22 +118,24 @@ def eval_learning_alg(learner, data_gen, n_train, n_test, iter):
 
 def xval_learning_alg(learner, data, labels, k):
     d, n = data.shape
-    di = np.array_split(data.T, k)
-    print(di)
-    trainData = np.empty((0, d))
-    testData = np.empty((d))
+    ids = np.array_split(np.arange(n), k)
+    #print(ids)
     scores = []
     for j in range(k):
-        for i in range (di[j].shape[0]):
-            print("di[j][i] ", di[j][i])
-            if i == j:
-                newTestData = di[j][i]
-                testData = np.concatenate((testData, newTestData), axis=0)
-            else:
-                trainData = np.vstack(di[j][i])
-        #print("trn ", trainData)
-        print("test ", testData)
-    return 0
+        #print(j)
+        testIs = ids[j] 
+        trainIs = np.empty((0))
+        for i in range(k):
+            if (i != j):
+                trainIs = np.concatenate([trainIs, ids[i]])
+        #print(trainIs)
+        trainD = data[:, trainIs.astype(int)]
+        trainL = labels[:, trainIs.astype(int)]
+        testD = data[:, testIs.astype(int)]
+        testL = labels[:, testIs.astype(int)]
+        #print(trainIs, trainD, trainL, testD, testL)
+        scores.append(eval_classifier(learner, trainD, trainL, testD, testL))
+    return np.mean(scores)
 
 print(perceptron(super_simple_separable()[0], super_simple_separable()[1]))
 print(perceptron(super_simple_separable_through_origin()[0], super_simple_separable_through_origin()[1]))
