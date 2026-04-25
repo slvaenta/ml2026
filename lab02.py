@@ -120,27 +120,20 @@ def xval_learning_alg(learner, data, labels, k):
     d, n = data.shape
     di = np.array_split(data.T, k)
     print(di)
+    trainData = np.empty((0, d))
+    testData = np.empty((d))
     scores = []
-    for i in range(k):
-        wholedi = di[i]
-        print(wholedi)
-        newdiN, newdiD = wholedi.shape
-        print(newdiD, newdiD)
-        newdi = np.ones((newdiD,newdiN))
-
-        for j in range (k):
-            if i != j:
-                newdi[i] = wholedi[i]
-            
-        train_idx = np.concatenate([di[i] for i in range(k) if i != j])
-        data_train = data[:, train_idx]
-        labels_train = labels[:, train_idx]
-        data_test = data[:, wholedi]
-        labels_test = labels[:, wholedi]
-        scores.append(
-            eval_classifier(learner, data_train, labels_train, data_test, labels_test)
-        )
-    return np.mean(scores)
+    for j in range(k):
+        for i in range (di[j].shape[0]):
+            print("di[j][i] ", di[j][i])
+            if i == j:
+                newTestData = di[j][i]
+                testData = np.concatenate((testData, newTestData), axis=0)
+            else:
+                trainData = np.vstack(di[j][i])
+        #print("trn ", trainData)
+        print("test ", testData)
+    return 0
 
 print(perceptron(super_simple_separable()[0], super_simple_separable()[1]))
 print(perceptron(super_simple_separable_through_origin()[0], super_simple_separable_through_origin()[1]))
