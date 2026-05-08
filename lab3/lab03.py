@@ -54,6 +54,7 @@ sep_e_separator = np.array([[-0.40338351], [1.1849563]]), np.array([[-2.26910091
 # Задание 2
 
 def grad_desc(f, df, x0, eta, T):
+    
     return None
 
 def num_grad(f, delta = 0.001):
